@@ -1,17 +1,17 @@
-import { registerPlugins } from '@/plugins'
+//import { registerPlugins } from '@/plugins'
 import App from './App.vue'
 import { createApp } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import '@mdi/font/css/materialdesignicons.css'
+
 import router from './router'
 import { createStore } from "vuex";
 
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import {  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,createUserWithEmailAndPassword, updateProfile} from 'firebase/auth'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyDhQ-ZU2HH0LrJkafh1KjeExo8W2K_2dO0",
   authDomain: "projecttic-df3d3.firebaseapp.com",
@@ -21,10 +21,8 @@ const firebaseConfig = {
   appId: "1:537098858888:web:92bd505550af4f5f2a4a3d"
 };
 
-// Initialize Firebase
 const appF = initializeApp(firebaseConfig);
 
-//initialize firebase auth
 const auth = getAuth()
 
 
@@ -40,6 +38,7 @@ const auth = getAuth()
       return state.user
     }
   },
+  //Mutations allow us to make changes to our state;
   mutations: {
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
@@ -53,7 +52,7 @@ const auth = getAuth()
         const response = await createUserWithEmailAndPassword(auth, email, password)
         if (response) {
             context.commit('SET_USER', response.user)
-            //response.user.updateProfile({displayName: name})
+            response.user.updateProfile({displayName: name})
         } else {
             throw new Error('Unable to register user')
         }
@@ -77,7 +76,6 @@ const auth = getAuth()
     context.commit("SET_LOGGED_IN", user !== null);
     if (user) {
       context.commit("SET_USER", {
-        displayName: user.displayName,
         email: user.email
       });
     } else {
@@ -88,8 +86,30 @@ const auth = getAuth()
   modules: {},
 });
 
-const app = createApp(App).use(router).use(store)
-registerPlugins(app)
+// const vuetify = createVuetify({
+//   components,
+//   directives,
+// });
+
+// import Vue from 'vue'
+// import Vuetify from 'vuetify'
+
+// Vue.use(Vuetify)
+
+
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
+
+const vuetify = createVuetify({
+  components,
+  directives,
+});
+
+const app = createApp(App).use(router).use(store).use(vuetify)
+//.use(vuetify)
+//registerPlugins(app)
 app.mount('#app')
 
 

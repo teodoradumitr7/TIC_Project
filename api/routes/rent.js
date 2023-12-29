@@ -20,4 +20,21 @@ router.post("/rentals/:id", async (req, res) => {
   res.json(response);
 });
 
+
+
+router.get("/rentals", async (req, res) => {
+  let rentals = [];
+  const result = await db.collection("rentals").get();
+
+  result.forEach((doc) => {
+    let rental = {
+      id: doc.id,
+      days: doc.data().days,
+      user: doc.data().user,
+      vin: doc.data().vin,
+    };
+    rentals.push(rental);
+  });
+  res.json(rentals);
+});
 module.exports = router;

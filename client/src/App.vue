@@ -12,32 +12,42 @@ import { RouterLink, RouterView } from "vue-router";
         >Register</RouterLink
       >
       <RouterLink to="/" class="link">Home</RouterLink>
-      <RouterLink v-if="isAuthenticated" to="/addRent" class="link"
+      <RouterLink v-if="isAuthenticated" to="/rentCar" class="link"
         >Add Rental</RouterLink
       >
     </div>
   </nav>
-  <button v-if="isAuthenticated" @click="logout()" id="logoutBtn">
-    Logout
-  </button>
   <RouterView />
 </template>
 
 <script>
+import { useStore} from "vuex";
+import { useRouter } from "vue-router";
+import {computed} from "vue";
+import { auth ,onAuthStateChanged} from './firebaseConfig'
+
+
 export default {
-  computed: {
-    isAuthenticated() {
-      // return this.$store.state.isAuthenticated;
-      console.log("Auth")
-    },
-  },
-  methods: {
-    logout() {
-      this.$store.commit("SET_AUTH", false);
-      window.localStorage.removeItem("JWTtoken");
-      this.$router.push("/");
-    },
-  },
+
+  setup() {
+
+const store = useStore()
+const router = useRouter()
+
+auth.onAuthStateChanged(user => {
+  store.dispatch("fetchUser", user);
+  isAuthenticated=true;
+  console.log(user)
+});
+
+const user = computed(() => {
+  return store.getters.user;
+});
+
+
+  return {user,}}
+
+
 };
 </script>
 <style>

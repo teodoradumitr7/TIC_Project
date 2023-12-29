@@ -51,6 +51,7 @@
   #loginBtn, #registerBtn{
     margin-top: 5px;
     display: block;
+    color: #f7f6f4;
   }
 
   #loginForm, #registerForm{
@@ -58,6 +59,8 @@
     width: 800px;
   }
 
+
+  
   @media only screen and (max-width: 1080px) {
     #loginForm, #registerForm{
         width: 100%;

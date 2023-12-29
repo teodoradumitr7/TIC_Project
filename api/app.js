@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const logger = require("morgan");
 const db = require("./db");
 const secret = "carRental";
-const { generateCars} = require("../api/utils");
+const { generateCars,generateRentals} = require("../api/utils");
 const carRouter = require("../api/routes/car");
 const rentalRouter = require("../api/routes/rent");
 
@@ -29,12 +29,21 @@ app.use((error, request, response, next) => {
 //login user
 //get cars
 app.get("/populateCars",async (req,res)=>{
-    // let carMock=generateCars();
-    // carMock.forEach(async (car)=>{
-    //     await db.collection("cars").add(car);
-    // });
+    let carMock=generateCars();
+    carMock.forEach(async (car)=>{
+        await db.collection("cars").add(car);
+    });
     //let cars=await db.collection("cars").get();
     res.send("PopulateCars");
+});
+
+app.get("/populateRental",async (req,res)=>{
+  let rentalMock=generateRentals();
+  rentalMock.forEach(async (rent)=>{
+      await db.collection("rentals").add(rent);
+  });
+  //let cars=await db.collection("cars").get();
+  res.send("PopulateRental");
 });
 
 

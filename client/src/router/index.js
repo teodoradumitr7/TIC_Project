@@ -24,6 +24,11 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component:()=>import("@/views/Dashboard.vue")
+},
+{
+  path: '/rentCar',
+  name: 'RentCar',
+  component:()=>import("@/views/RentCar.vue")
 }
 ]
 

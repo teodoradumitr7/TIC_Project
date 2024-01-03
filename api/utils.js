@@ -21,13 +21,18 @@ const generateCars = () => {
 };
 
 const generateRentals = () => {
+  let date=new Date().toLocaleDateString('en-GB');
+
   let rentingList = [];
   const users = ["teo@gmail.com", "teod@gmail.com"];
   for (let i = 0; i < 5; i++) {
+    let daysBetween=Math.floor(Math.random() * (30-10) + 10)
     let rental = {
       vin: vinList[Math.floor(Math.random() * vinList.length)],
-      days: Math.floor(Math.random() * (60-30) + 30),
+      days:daysBetween,
       user: users[Math.floor(Math.random() * users.length)],
+      dateStart:new Date(new Date().setDate(new Date().getDate()-daysBetween)).toLocaleDateString('en-GB'),
+      dateEnd:date
     };
     console.log("Faked rental");
     rentingList.push(rental);

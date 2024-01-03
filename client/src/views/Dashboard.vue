@@ -4,27 +4,49 @@
       <div class="col-md-10">
         <div class="card">
           <div v-if="user.loggedIn">
-
-          <div class="card-header">Welcome, {{user.data.email}}</div>
-          <div class="card-body">
-            <div class="alert alert-success" role="alert">
-            You are logged in!
-            <div class="my-4">
-                  <button  @click.prevent="signOut" class="activeButtons">Log Out</button>
+            <div class="card-header">Welcome, {{ user.data.email }}</div>
+            <div class="card-body">
+              <div class="alert alert-success" role="alert">
+                You are logged in!
+                <div class="my-4">
+                  <button @click.prevent="signOut" class="activeButtons">
+                    Log Out
+                  </button>
+                </div>
+              </div>
             </div>
-             </div>
+            <template v-for="rental in rentals" max-width="344">
+              <v-card v-if="rental.user == user.data.email">
+                <v-card-title>Your rentals are: {{ rental.vin }}</v-card-title>
+                <v-card-subtitle>For: {{ rental.days }} days</v-card-subtitle>
+                <v-card-subtitle>From: {{ rental.dateStart }} </v-card-subtitle>
+                <v-card-subtitle>To: {{ rental.dateEnd }} </v-card-subtitle>
+                <div class="col-md-8 offset-md-5">
+                  <button
+                  id="editRental"
+                    type="submit"
+                    class="activeButtons"
+                    @click="editRental(rental)"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div class="col-md-8 offset-md-5">
+                  <button
+                  id="deleteRental"
+                    type="submit"
+                    class="activeButtons"
+                    @click="deleteRental(rental)"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </v-card>
+            </template>
           </div>
-          <template v-for="rental in rentals"  max-width="344" >
-            <v-card v-if="rental.user==user.data.email">
-            <v-card-title>Your rentals are: {{ rental.vin }}</v-card-title>
-      <v-card-subtitle>For: {{ rental.days }} days</v-card-subtitle>
-    </v-card>
-          </template>
-
+          <div v-else class="alert alert-danger" role="alert">
+            You are not logged in!
           </div>
-            <div v-else class="alert alert-danger" role="alert">
-              You are not logged in!
-            </div>
         </div>
       </div>
     </div>
@@ -32,41 +54,39 @@
 </template>
 
 <script>
-import { useStore} from "vuex";
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import {computed} from "vue";
-import { auth ,onAuthStateChanged} from '../firebaseConfig'
+import { computed } from "vue";
+import { auth, onAuthStateChanged } from "../firebaseConfig";
 import { requestOptions, base_url } from "@/requestOptions";
 
 export default {
   name: "DashboardComponent",
 
   setup() {
+    const store = useStore();
+    const router = useRouter();
 
-  const store = useStore()
-  const router = useRouter()
+    auth.onAuthStateChanged((user) => {
+      store.dispatch("fetchUser", user);
+      console.log(user);
+    });
 
-  auth.onAuthStateChanged(user => {
-    store.dispatch("fetchUser", user);
-    console.log(user)
-  });
+    const user = computed(() => {
+      return store.getters.user;
+    });
 
-  const user = computed(() => {
-    return store.getters.user;
-  });
+    const signOut = async () => {
+      await store.dispatch("logOut");
+      router.push("/");
+    };
 
-  const signOut = async () => {
-        await store.dispatch('logOut')
-        router.push('/')
-  }
-
-    return {user,signOut}
- }
-,
-data(){
-  return{rentals:[]}
-},
-created() {
+    return { user, signOut };
+  },
+  data() {
+    return { rentals: [] };
+  },
+  created() {
     if (!this.rentals.length) {
       fetch(base_url + "rentals", requestOptions).then((res) =>
         res.json().then((res) => {
@@ -75,13 +95,22 @@ created() {
       );
     }
   },
-
-
+  methods: {
+    editRental(rental) {
+      this.$router.push({ path: "/editRental", query: rental });
+    },
+    deleteRental(rental) {
+      let requestParams = { ...requestOptions };
+      requestParams.method = "DELETE";
+      fetch(base_url + "rentals/" + rental.id, requestParams);
+      this.rentals.splice(this.rentals.indexOf(rental), 1);
+    },
+  },
 };
 </script>
 
 <style>
-.activeButtons {
+/* .activeButtons {
   background-color: #a0085f;
   color: whitesmoke;
   border-radius: 5px;
@@ -90,9 +119,21 @@ created() {
   height: 30px;
   margin: 3px;
   margin-top: 10px;
+  width: max-content;
+} */
+
+.activeButtons {
+  border: 3px solid;
+  border-color: #862e42;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  background-color: #a0085f;
+  width: 40%;
+  margin-top: 10px;
 }
 
-.v-card{
+.v-card {
   width: 500px;
   display: block;
   flex-direction: row;

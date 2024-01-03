@@ -88,7 +88,11 @@ export default {
   computed: {},
   methods: {
     rentCar(car) {
-      this.$router.push({ path: "/rentCar", query: car });
+      let info={};
+      info.vin=car.vin;
+      info.user= this.user.data.email;
+      console.log("info ",info)
+      this.$router.push({ path: "/rentCar", query: info });
     },
     getDashboard(){
       this.$router.push("/dashboard")

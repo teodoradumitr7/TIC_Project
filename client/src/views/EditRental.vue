@@ -1,22 +1,32 @@
+<!-- <template>
+  <form @submit.prevent="editRental()">
+    <label> DateStart </label>
+    <input v-model="dateStart" type="date" required />
+    <label> DateEnd </label>
+    <input v-model="dateEnd" type="date" required />
+    <button type="submit">Save Changes</button>
+  </form>
+</template> -->
+
 <template>
   <div class="container">
     <div v-if="isAuthenticated == true">
-      <form class="form" @submit.prevent="addRental()">
+      <form class="form" @submit.prevent="editRental()">
         <div class="form-group">
-          <label class="label">Starting from: </label>
+          <label class="label">DateStart</label>
           <div class="control">
             <input class="input" v-model="dateStart" type="date" required />
           </div>
         </div>
         <div class="form-group">
-          <label class="label">To: </label>
+          <label class="label">DateEnd</label>
           <div class="control">
             <input class="input" v-model="dateEnd" type="date" required />
           </div>
         </div>
         <div class="form-group">
           <button class="button is-primary is-fullwidth" type="submit">
-            Add rental request
+            Save Changes
           </button>
         </div>
       </form>
@@ -29,6 +39,7 @@
               </div>
               </div>
     </div>
+
   </div>
 </template>
 
@@ -36,8 +47,6 @@
 import { requestOptions, base_url } from "@/requestOptions";
 
 export default {
-  name: "RentCarComponent",
-
   computed: {
     isAuthenticated() {
       console.log("is auth=", this.$store.state.isAuthenticated);
@@ -46,35 +55,29 @@ export default {
   },
   data() {
     return {
-      dateStart: "",
-      dateEnd: "",
-      vin: this.$route.query.vin,
-      user: this.$route.query.user,
+      dateStart: this.$route.query.dateStart,
+      dateEnd: this.$route.query.dateEnd,
     };
   },
 
   methods: {
-    addRental() {
+    editRental() {
       let requestParams = { ...requestOptions };
-      requestParams.method = "POST";
+      requestParams.method = "PUT";
       let rental = {
         dateStart: this.dateStart,
         dateEnd: this.dateEnd,
-        vin: this.vin,
-        user: this.user,
       };
-      console.log(rental);
       requestParams.body = JSON.stringify(rental);
-      fetch(base_url + "rentals", requestParams)
+      fetch(base_url + "rentals/" + this.$route.query.id, requestParams)
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
           if (res === "Decoding failed!" || res === "Expired token") {
             console.log("Authentification Error");
           } else {
-
-            rental.id = res.id;
-            this.$router.push("/");
+            let rentals = fetch(base_url + "rentals", requestOptions);
+            this.$router.push("/dashboard");
           }
         });
     },
@@ -137,4 +140,5 @@ export default {
   margin: 3px;
   margin-top: 10px;
 }
+
 </style>

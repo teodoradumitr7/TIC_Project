@@ -6,85 +6,91 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 import router from './router'
-import { createStore } from "vuex";
+import store from './store/store';
+// import { createStore } from "vuex";
 
-import { initializeApp } from "firebase/app";
-import {  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,createUserWithEmailAndPassword, updateProfile} from 'firebase/auth'
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDhQ-ZU2HH0LrJkafh1KjeExo8W2K_2dO0",
-  authDomain: "projecttic-df3d3.firebaseapp.com",
-  projectId: "projecttic-df3d3",
-  storageBucket: "projecttic-df3d3.appspot.com",
-  messagingSenderId: "537098858888",
-  appId: "1:537098858888:web:92bd505550af4f5f2a4a3d"
-};
-
-const appF = initializeApp(firebaseConfig);
-
-const auth = getAuth()
+// import { initializeApp } from "firebase/app";
+// import {  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,createUserWithEmailAndPassword, updateProfile} from 'firebase/auth'
 
 
- const store= createStore({
-  state: {
-    user: {
-      loggedIn: false,
-      data: null
-    }
-  },
-  getters: {
-    user(state){
-      return state.user
-    }
-  },
-  //Mutations allow us to make changes to our state;
-  mutations: {
-    SET_LOGGED_IN(state, value) {
-      state.user.loggedIn = value;
-    },
-    SET_USER(state, data) {
-      state.user.data = data;
-    }
-  },
-  actions: {
-    async register(context, { email, password, name}){
-        const response = await createUserWithEmailAndPassword(auth, email, password)
-        if (response) {
-            context.commit('SET_USER', response.user)
-            response.user.updateProfile({displayName: name})
-        } else {
-            throw new Error('Unable to register user')
-        }
-    },
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDhQ-ZU2HH0LrJkafh1KjeExo8W2K_2dO0",
+//   authDomain: "projecttic-df3d3.firebaseapp.com",
+//   projectId: "projecttic-df3d3",
+//   storageBucket: "projecttic-df3d3.appspot.com",
+//   messagingSenderId: "537098858888",
+//   appId: "1:537098858888:web:92bd505550af4f5f2a4a3d"
+// };
 
-    async logIn(context, { email, password }){
-      const response = await signInWithEmailAndPassword(auth, email, password)
-      if (response) {
-          context.commit('SET_USER', response.user)
-      } else {
-          throw new Error('login failed')
-      }
-  },
+// const appF = initializeApp(firebaseConfig);
 
-  async logOut(context){
-      await signOut(auth)
-      context.commit('SET_USER', null)
-  },
+// const auth = getAuth()
 
-  async fetchUser(context ,user) {
-    context.commit("SET_LOGGED_IN", user !== null);
-    if (user) {
-      context.commit("SET_USER", {
-        email: user.email
-      });
-    } else {
-      context.commit("SET_USER", null);
-    }
-}
-},
-  modules: {},
-});
+
+//  const store= createStore({
+//   state: {
+//     user: {
+//       loggedIn: false,
+//       data: null
+//     },
+//     isAuthenticated: localStorage.getItem("JWTtoken") ? true : false,
+//   },
+//   getters: {
+//     user(state){
+//       return state.user
+//     }
+//   },
+//   //Mutations allow us to make changes to our state;
+//   mutations: {
+//     SET_LOGGED_IN(state, value) {
+//       state.user.loggedIn = value;
+//       state.isAuthenticated = value;
+//     },
+//     SET_USER(state, data) {
+//       state.user.data = data;
+//     }
+//   },
+//   actions: {
+//     async register(context, { email, password, name}){
+//         const response = await createUserWithEmailAndPassword(auth, email, password)
+//         if (response) {
+//             context.commit('SET_USER', response.user)
+// //response.user.updateProfile({displayName: name})
+// localStorage.setItem("JWTtoken", true);
+//         } else {
+//             throw new Error('Unable to register user')
+//         }
+//     },
+
+//     async logIn(context, { email, password }){
+//       const response = await signInWithEmailAndPassword(auth, email, password)
+//       if (response) {
+//           context.commit('SET_USER', response.user)
+//           localStorage.setItem("JWTtoken", true);
+//       } else {
+//           throw new Error('login failed')
+//       }
+//   },
+
+//   async logOut(context){
+//       await signOut(auth)
+//       context.commit('SET_USER', null)
+//       localStorage.setItem("JWTtoken", false);
+//   },
+
+//   async fetchUser(context ,user) {
+//     context.commit("SET_LOGGED_IN", user !== null);
+//     if (user) {
+//       context.commit("SET_USER", {
+//         email: user.email
+//       });
+//     } else {
+//       context.commit("SET_USER", null);
+//     }
+// }
+// },
+//   modules: {},
+// });
 
 // const vuetify = createVuetify({
 //   components,

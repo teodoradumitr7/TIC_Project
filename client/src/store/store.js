@@ -26,7 +26,8 @@ const store= createStore({
     user: {
       loggedIn: false,
       data: null
-    }
+    },
+    isAuthenticated: localStorage.getItem("JWTtoken"),
   },
   getters: {
     user(state){
@@ -36,6 +37,7 @@ const store= createStore({
   mutations: {
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
+      state.isAuthenticated = value;
     },
     SET_USER(state, data) {
       state.user.data = data;
@@ -46,7 +48,7 @@ const store= createStore({
         const response = await createUserWithEmailAndPassword(auth, email, password)
         if (response) {
             context.commit('SET_USER', response.user)
-            response.user.updateProfile({displayName: name})
+            localStorage.setItem("JWTtoken", true);
         } else {
             throw new Error('Unable to register user')
         }
@@ -56,6 +58,7 @@ const store= createStore({
       const response = await signInWithEmailAndPassword(auth, email, password)
       if (response) {
           context.commit('SET_USER', response.user)
+          localStorage.setItem("JWTtoken", true);
       } else {
           throw new Error('login failed')
       }
@@ -64,13 +67,13 @@ const store= createStore({
   async logOut(context){
       await signOut(auth)
       context.commit('SET_USER', null)
+      localStorage.setItem("JWTtoken", false);
   },
 
   async fetchUser(context ,user) {
     context.commit("SET_LOGGED_IN", user !== null);
     if (user) {
       context.commit("SET_USER", {
-        displayName: user.displayName,
         email: user.email
       });
     } else {

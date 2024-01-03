@@ -12,44 +12,61 @@ import { RouterLink, RouterView } from "vue-router";
         >Register</RouterLink
       >
       <RouterLink to="/" class="link">Home</RouterLink>
-      <RouterLink v-if="isAuthenticated" to="/rentCar" class="link"
-        >Add Rental</RouterLink
-      >
+
     </div>
   </nav>
   <RouterView />
 </template>
+<!-- <template>
+  <nav>
+    <div id="linkContainer">
+      <RouterLink v-if="!user" to="/login" class="link">Login</RouterLink>
+      <RouterLink v-if="!user" to="/register" class="link">Register</RouterLink>
+      <RouterLink to="/" class="link">Home</RouterLink>
+     </div>
+  </nav>
+  <RouterView />
+</template> -->
+
+<!-- <script>
+import { mapState } from "vuex";
+
+export default {
+  computed: {
+    ...mapState(["isAuthenticated"]),
+  },
+};
+</script> -->
+
+<!-- <script>
+import { useStore } from "vuex";
+import { computed } from "vue";
+
+export default {
+  setup() {
+    const store = useStore();
+
+    const user = computed(() => {
+      return store.state.user.loggedIn;
+    });
+
+    return { user };
+  },
+};
+</script> -->
 
 <script>
-import { useStore} from "vuex";
-import { useRouter } from "vue-router";
-import {computed} from "vue";
-import { auth ,onAuthStateChanged} from './firebaseConfig'
-
 
 export default {
 
-  setup() {
+  computed: {
+    isAuthenticated() {
+      return this.$store.state.isAuthenticated;
+    },
+  },
+}
+  </script>
 
-const store = useStore()
-const router = useRouter()
-
-auth.onAuthStateChanged(user => {
-  store.dispatch("fetchUser", user);
-  isAuthenticated=true;
-  console.log(user)
-});
-
-const user = computed(() => {
-  return store.getters.user;
-});
-
-
-  return {user,}}
-
-
-};
-</script>
 <style>
 nav {
   display: flex;
@@ -58,6 +75,7 @@ nav {
   height: 40px;
   background-color: #A0085F;
   border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .link {
@@ -69,6 +87,7 @@ nav {
   border: 2px solid#f56457;
   border-radius: 5px;
   text-align: center;
+  transition: all 0.2s ease-in-out;
 }
 #logoutBtn {
   background-color: #862E42;
@@ -83,5 +102,10 @@ nav {
   display: flex;
   flex-direction: row;
   justify-items: center;
+}
+
+.link:hover {
+  background-color: #f56457;
+  color: white;
 }
 </style>

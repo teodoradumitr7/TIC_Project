@@ -4,9 +4,31 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../db");
 
+async function checkAuthorization(req, res, next) {
+  console.log("a trecut prin middleware");
+//mai degraba daca auth e acelasi cu local storage
+  let token = req.headers.authorization;
+  console.log(token)
+  const filteredUsers =  db.collection('users');
+  const snapshot = await filteredUsers.where('id', '==', token).get();
+        if (snapshot.empty) {
+          res.status(401).json({
+            error:"USer does not exist"
+          })
+          console.log('No matching user emails.');
+          return;
+    } else {
+      req.email = snapshot
+      //we have access to the identification data used to generate the token
+      //this way we can write a logic to access only the resources for which
+      //a request is authorized
+      next();
+    }
+
+}
 
 //post rental req
-router.post("/rentals", async (req, res) => {
+router.post("/rentals",checkAuthorization,async (req, res) => {
   let rental = {
     vin: req.body.vin,
       days: daysBetweenDates(req.body.dateEnd,req.body.dateStart),
@@ -19,11 +41,11 @@ router.post("/rentals", async (req, res) => {
     .collection("rentals")
     .add(rental);
 
-  res.json(response);
+  res.status(201).json(response);
 });
 
 //put rental req
-router.put("/rentals/:id", async (req, res) => {
+router.put("/rentals/:id", checkAuthorization,async (req, res) => {
   let rental = {
     dateStart:req.body.dateStart,
     dateEnd:req.body.dateEnd,
@@ -36,11 +58,11 @@ router.put("/rentals/:id", async (req, res) => {
     .doc(req.params.id)
     .update(rental);
 
-  res.json(response);
+  res.status(200).json(response);
 });
 
 //delete rental req
-router.delete("/rentals/:id", async (req, res) => {
+router.delete("/rentals/:id",checkAuthorization, async (req, res) => {
  
 
   let response = await db
@@ -48,7 +70,7 @@ router.delete("/rentals/:id", async (req, res) => {
     .doc(req.params.id)
     .delete();
 
-  res.json("Deleted rental req");
+  res.status(200).json("Deleted rental req");
 });
 
 function daysBetweenDates(date1, date2) {

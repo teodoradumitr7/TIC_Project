@@ -9,17 +9,17 @@
 </template> -->
 
 <template>
-  <div class="container">
+  <div class="containerEditRent">
     <div v-if="isAuthenticated == true">
       <form class="form" @submit.prevent="editRental()">
         <div class="form-group">
-          <label class="label">DateStart</label>
+          <label class="label">Starting from:</label>
           <div class="control">
             <input class="input" v-model="dateStart" type="date" required />
           </div>
         </div>
         <div class="form-group">
-          <label class="label">DateEnd</label>
+          <label class="label">To:</label>
           <div class="control">
             <input class="input" v-model="dateEnd" type="date" required />
           </div>
@@ -69,6 +69,7 @@ export default {
         dateEnd: this.dateEnd,
       };
       requestParams.body = JSON.stringify(rental);
+      requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
       fetch(base_url + "rentals/" + this.$route.query.id, requestParams)
         .then((res) => res.json())
         .then((res) => {
@@ -94,6 +95,12 @@ export default {
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+}
+
+.containerEditRent{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-group {

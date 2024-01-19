@@ -59,8 +59,134 @@
     width: 800px;
   }
 
-
+  .activeButtons {
+    background-color: #a0085f;
+    color: whitesmoke;
+    border-radius: 5px;
+    border: 3px solid;
+    border-color: #862e42;
+    height: 30px;
+    margin: 3px;
+    margin-top: 10px;
+    width: max-width;
+    display: inline-block;
+  }
   
+  #centerCards{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #centerLogOutEdit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #logOutEdit{
+    width: 80%;
+  }
+  .activeButtonsEdit {
+    border: 3px solid;
+    border-color: #862e42;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    background-color: #a0085f;
+    width: 40%;
+    margin-top: 10px;
+  }
+  
+  .rentalCard {
+    width: 500px;
+    display: block;
+    flex-direction: row;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
+  }
+
+  #titleHome {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    margin: 20px;
+    margin-bottom: 20px;
+  }
+  #carsContainerHome {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin: 5px;
+    margin-top: 20px;
+  }
+  
+  .carCard {
+    align-items: center;
+    border: 2px solid;
+    border-color: #a0085f;
+    border-radius: 5px;
+    box-shadow: 0px 5px 20px rgba(34, 35, 58, 0.2);
+    margin: 5px;
+    width: max-content;
+  }
+  
+.activeButtonsHome {
+  background-color: #a0085f;
+  color: whitesmoke;
+  border-radius: 5px;
+  border: 3px solid;
+  border-color: #862e42;
+  height: 30px;
+  margin: 20px;
+  width: 30%;
+  display: inline;
+}
+#centerHome{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#logOutHome{
+  width: 20%;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  height: 60px;
+  background-color: #A0085F;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  align-items: center;
+}
+
+.link {
+  width: max-content;
+  text-decoration: none;
+  color: whitesmoke;
+  margin: 2px;
+  padding: 5px;
+  border: 2px solid#f56457;
+  border-radius: 5px;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+#linkContainer {
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+}
+
+.link:hover {
+  background-color: #f56457;
+  color: white;
+}
+
+
+
   @media only screen and (max-width: 1080px) {
     #loginForm, #registerForm{
         width: 100%;

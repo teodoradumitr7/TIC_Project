@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut} from 'firebase/auth'
+import {  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut,createUserWithEmailAndPassword} from 'firebase/auth'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -45,20 +45,53 @@ const store= createStore({
   },
   actions: {
     async register(context, { email, password, name}){
+      let url = "http://localhost:3000/"
         const response = await createUserWithEmailAndPassword(auth, email, password)
         if (response) {
             context.commit('SET_USER', response.user)
             localStorage.setItem("JWTtoken", true);
+            localStorage.setItem("JWTtk", response.user.uid);
+            fetch(url + 'register', {
+              method: 'POST',
+              mode: 'cors',
+              cache: 'no-cache',
+              credentials: 'same-origin',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              redirect: 'follow',
+              referrerPolicy: 'no-referrer',
+              body: JSON.stringify(response.user) //data format must be the same as in header
+              })
+              .then(res => res.text()
+              .then(res => console.log(res))
+              )
         } else {
             throw new Error('Unable to register user')
         }
     },
 
     async logIn(context, { email, password }){
+      let url = "http://localhost:3000/"
       const response = await signInWithEmailAndPassword(auth, email, password)
       if (response) {
+        //console.log(response.user)
           context.commit('SET_USER', response.user)
           localStorage.setItem("JWTtoken", true);
+          localStorage.setItem("JWTtk", response.user.uid);
+          fetch(url + 'login', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify(response.user) //data format must be the same as in header
+            })
+            .then(res => res.json())
       } else {
           throw new Error('login failed')
       }
@@ -68,6 +101,7 @@ const store= createStore({
       await signOut(auth)
       context.commit('SET_USER', null)
       localStorage.setItem("JWTtoken", false);
+      localStorage.removeItem("JWTtk");
   },
 
   async fetchUser(context ,user) {

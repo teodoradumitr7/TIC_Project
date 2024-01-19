@@ -107,13 +107,15 @@ import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import underscore from 'vue-underscore';
+import Notifications from '@kyvg/vue3-notification'
 
 const vuetify = createVuetify({
   components,
   directives,
 });
 
-const app = createApp(App).use(router).use(store).use(vuetify)
+const app = createApp(App).use(router).use(store).use(vuetify).use(Notifications)
 //.use(vuetify)
 //registerPlugins(app)
 app.mount('#app')

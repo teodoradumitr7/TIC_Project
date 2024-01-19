@@ -1,6 +1,7 @@
 <template>
-  <div class="container">
+  <div class="containerAddRent">
     <div v-if="isAuthenticated == true">
+
       <form class="form" @submit.prevent="addRental()">
         <div class="form-group">
           <label class="label">Starting from: </label>
@@ -54,6 +55,26 @@ export default {
   },
 
   methods: {
+    checkDate(start,end){
+      const [day1, month1, year1] = start.split('/');
+  const [day2, month2, year2] = end.split('/');
+  const current=new Date();
+  const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
+  const dateObj2 = new Date(`${year2}-${month2}-${day2}`);
+  let diffInMs = dateObj2 - dateObj1;
+
+  console.log(dateObj1)
+  console.log(dateObj2)
+  console.log(current)
+
+  if(current>dateObj1 || current>dateObj2){
+    return false;
+  }
+  else if(diffInMs<0){
+    return false;
+  }
+ return true;
+    },
     addRental() {
       let requestParams = { ...requestOptions };
       requestParams.method = "POST";
@@ -63,8 +84,10 @@ export default {
         vin: this.vin,
         user: this.user,
       };
-      console.log(rental);
-      requestParams.body = JSON.stringify(rental);
+      let bool=this.checkDate(rental.dateStart,rental.dateEnd)
+      if(bool)
+      {requestParams.body = JSON.stringify(rental);
+      requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
       fetch(base_url + "rentals", requestParams)
         .then((res) => res.json())
         .then((res) => {
@@ -77,6 +100,11 @@ export default {
             this.$router.push("/");
           }
         });
+      }
+      else{
+        console.log("NU e buna data")
+        this.$notify({ type: "error", text: "Date is not properly inserted" });
+      }
     },
     getLogin(){
       this.$router.push("/login")
@@ -93,6 +121,11 @@ export default {
   padding: 20px;
 }
 
+.containerAddRent{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .form-group {
   margin-bottom: 20px;
 }

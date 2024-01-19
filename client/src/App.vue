@@ -3,7 +3,10 @@ import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <nav>
+  <notifications/>
+  <div id="nav">
+  <nav class="container navbar navbar-expand-md navbar-light bg-light">
+    <div>
     <div id="linkContainer">
       <RouterLink v-if="!isAuthenticated" to="/login" class="link"
         >Login</RouterLink
@@ -12,9 +15,14 @@ import { RouterLink, RouterView } from "vue-router";
         >Register</RouterLink
       >
       <RouterLink to="/" class="link">Home</RouterLink>
+      <RouterLink v-if="isAuthenticated" to="/dashboard" class="link"
+        >Dashboard</RouterLink
+      >
 
     </div>
+    </div>
   </nav>
+</div>
   <RouterView />
 </template>
 <!-- <template>
@@ -63,39 +71,50 @@ export default {
     isAuthenticated() {
       return this.$store.state.isAuthenticated;
     },
+    getEmail(){
+      if(this.$store.state.user.data.email)
+      return "Welcome"+this.$store.state.user.data.email;
+    else return "null"
+    },
   },
 }
   </script>
 
 <style>
 nav {
-  display: flex;
-  flex-direction: row;
+  height: fit-content;
+  display:flex;
   justify-content: center;
-  height: 40px;
   background-color: #A0085F;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
+#nav {
+  padding: 30px;
+  text-align: center;
+}
+
+#nav a {
+  font-weight: bold;
+  background: #A0085F;
+}
+
+#nav a.router-link-exact-active {
+  color:black;
+  border-radius: .5rem;
+}
+
 .link {
   width: max-content;
   text-decoration: none;
-  color: whitesmoke;
   margin: 2px;
   padding: 5px;
   border: 2px solid#f56457;
   border-radius: 5px;
   text-align: center;
   transition: all 0.2s ease-in-out;
-}
-#logoutBtn {
-  background-color: #862E42;
-  color: whitesmoke;
-  border-radius: 5px;
-  border-color: #f56457;
-  height: 30px;
-  margin-top: 10px;
 }
 
 #linkContainer {
@@ -104,8 +123,7 @@ nav {
   justify-items: center;
 }
 
-.link:hover {
+#nav a:hover {
   background-color: #f56457;
-  color: white;
 }
 </style>

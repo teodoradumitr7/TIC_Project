@@ -34,7 +34,7 @@
   <div id="carsContainerHome">
     <v-card v-for="car in filterCars" :key="car.VIN" max-width="344" class="carCard">
       <v-img
-        src="https://img.freepik.com/premium-vector/sketch-hand-drawn-single-line-art-car-use-logo-poster-background_469760-3566.jpg"
+        :src="car.image"
         height="200px"
         cover
       ></v-img>
@@ -199,6 +199,7 @@ export default {
       let info = {};
       info.vin = car.vin;
       info.user = this.user.data.email;
+      info.price=car.price;
       console.log("info ", info);
       this.$router.push({ path: "/rentCar", query: info });
     },

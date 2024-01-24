@@ -20,6 +20,7 @@
     "roboto-fontface": "*",
     "underscore": "^1.13.6",
     "vue": "^3.2.45",
+    "vue-moment": "^4.1.0",
     "vue-router": "^4.2.5",
     "vue-underscore": "^0.1.4",
     "vuetify": "^3.0.0",

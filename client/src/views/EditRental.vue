@@ -56,8 +56,8 @@ export default {
   data() {
     return {
       dateStart: this.$route.query.dateStart,
-      dateEnd: this.$route.query.dateEnd,
-    };
+      dateEnd: this.$route.query.dateEnd
+        };
   },
 
   methods: {
@@ -67,9 +67,14 @@ export default {
       let rental = {
         dateStart: this.dateStart,
         dateEnd: this.dateEnd,
+        user:this.$route.query.user,
+        vin:this.$route.query.vin,
+        price:this.$route.query.price
       };
       requestParams.body = JSON.stringify(rental);
       requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
+      requestParams.headers.email=rental.user
+      requestParams.headers.vin=rental.vin
       fetch(base_url + "rentals/" + this.$route.query.id, requestParams)
         .then((res) => res.json())
         .then((res) => {
@@ -78,7 +83,10 @@ export default {
             console.log("Authentification Error");
           } else {
             let rentals = fetch(base_url + "rentals", requestOptions);
-            this.$router.push("/dashboard");
+            let emailVal={}
+            emailVal.email=rental.user
+            console.log(emailVal)
+            this.$router.push({path:"/dashboard",query:emailVal});
           }
         });
     },

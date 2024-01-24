@@ -25,6 +25,7 @@
                 <v-card-subtitle>For: {{ rental.days }} days</v-card-subtitle>
                 <v-card-subtitle>From: {{ rental.dateStart }} </v-card-subtitle>
                 <v-card-subtitle>To: {{ rental.dateEnd }} </v-card-subtitle>
+                <v-card-subtitle>Price: {{ rental.price }} </v-card-subtitle>
                 <div class="col-md-8 offset-md-5">
                   <button
                   id="editRental"
@@ -89,11 +90,13 @@ export default {
     return { user, signOut };
   },
   data() {
-    return { rentals: [] };
+    return { email: this.$route.query.email,rentals: [] };
   },
   created() {
+
+
     if (!this.rentals.length) {
-      fetch(base_url + "rentals", requestOptions).then((res) =>
+      fetch(base_url + "rentals/"+this.$route.query.email, requestOptions).then((res) =>
         res.json().then((res) => {
           this.rentals = [...res];
         })
@@ -108,6 +111,8 @@ export default {
       let requestParams = { ...requestOptions };
       requestParams.method = "DELETE";
       requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
+      requestParams.headers.email=this.$route.query.email
+      requestParams.headers.vin=rental.vin
       fetch(base_url + "rentals/" + rental.id, requestParams);
       this.rentals.splice(this.rentals.indexOf(rental), 1);
     },

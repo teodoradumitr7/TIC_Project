@@ -14,7 +14,8 @@ router.get("/cars", async (req, res) => {
         manufacturer: doc.data().manufacturer,
         model: doc.data().model,
         price: doc.data().price,
-        vin:doc.data().vin
+        vin:doc.data().vin,
+        image:doc.data().image
       };
       cars.push(car);
     });

@@ -54,6 +54,7 @@
 import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { requestOptions, base_url } from "@/requestOptions";
 
 export default {
   name: "LoginComponent",
@@ -71,7 +72,10 @@ export default {
           email: email.value,
           password: password.value
         })
-        router.push('/dashboard')
+        let emailVal={}
+        emailVal.email=email.value
+        console.log(emailVal)
+        router.push({path:"/dashboard",query:emailVal})
       }
       catch (err) {
         error.value = err.message

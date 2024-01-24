@@ -15,7 +15,7 @@ import { RouterLink, RouterView } from "vue-router";
         >Register</RouterLink
       >
       <RouterLink to="/" class="link">Home</RouterLink>
-      <RouterLink v-if="isAuthenticated" to="/dashboard" class="link"
+      <RouterLink v-if="isAuthenticated" :to="{path:'/dashboard',query:{email:returnEmail()}}" class="link"
         >Dashboard</RouterLink
       >
 
@@ -70,14 +70,19 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.state.isAuthenticated;
+    }
     },
-    getEmail(){
-      if(this.$store.state.user.data.email)
-      return "Welcome"+this.$store.state.user.data.email;
-    else return "null"
-    },
+    methods:{
+      returnEmail(){
+      if(this.$store.state.isAuthenticated){
+        console.log(this.$store.state.user.data.email)
+      return this.$store.state.user.data.email;
+    }
+    }
   },
 }
+
+
   </script>
 
 <style>
@@ -127,3 +132,5 @@ nav {
   background-color: #f56457;
 }
 </style>
+
+

@@ -6,13 +6,13 @@
         <div class="form-group">
           <label class="label">Starting from: </label>
           <div class="control">
-            <input class="input" v-model="dateStart" type="date" required />
+            <input class="input" v-model="dateStart" type="date" :format="dateFormat"   required />
           </div>
         </div>
         <div class="form-group">
           <label class="label">To: </label>
           <div class="control">
-            <input class="input" v-model="dateEnd" type="date" required />
+            <input class="input" v-model="dateEnd" type="date" :format="dateFormat"   required />
           </div>
         </div>
         <div class="form-group">
@@ -38,7 +38,6 @@ import { requestOptions, base_url } from "@/requestOptions";
 
 export default {
   name: "RentCarComponent",
-
   computed: {
     isAuthenticated() {
       console.log("is auth=", this.$store.state.isAuthenticated);
@@ -47,10 +46,12 @@ export default {
   },
   data() {
     return {
-      dateStart: "",
-      dateEnd: "",
+      dateStart: '',
+      dateEnd: '',
+      dateFormat: 'dd/MM/yyyy',
       vin: this.$route.query.vin,
       user: this.$route.query.user,
+      price:this.$route.query.price
     };
   },
 
@@ -62,10 +63,10 @@ export default {
   const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
   const dateObj2 = new Date(`${year2}-${month2}-${day2}`);
   let diffInMs = dateObj2 - dateObj1;
+  console.log("data din front")
+  console.log(start)
+  console.log(end)
 
-  console.log(dateObj1)
-  console.log(dateObj2)
-  console.log(current)
 
   if(current>dateObj1 || current>dateObj2){
     return false;
@@ -80,26 +81,26 @@ export default {
       requestParams.method = "POST";
       let rental = {
         dateStart: this.dateStart,
-        dateEnd: this.dateEnd,
+        dateEnd:this.dateEnd,
         vin: this.vin,
         user: this.user,
+        price:this.price
       };
       let bool=this.checkDate(rental.dateStart,rental.dateEnd)
       if(bool)
       {requestParams.body = JSON.stringify(rental);
       requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
-      fetch(base_url + "rentals", requestParams)
+      fetch(base_url + "rentals/"+this.$route.query.id, requestParams)
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
-          if (res === "Decoding failed!" || res === "Expired token") {
-            console.log("Authentification Error");
+          if (res === "User is not auth" || res==="Data nu este buna") {
+            console.log("Error");
+            this.$notify({ type: "error", text: "Car is already booked. Change date!" });
           } else {
-
             rental.id = res.id;
             this.$router.push("/");
           }
-        });
+        })
       }
       else{
         console.log("NU e buna data")
@@ -108,7 +109,8 @@ export default {
     },
     getLogin(){
       this.$router.push("/login")
-    }
+    },
+
   },
 };
 </script>

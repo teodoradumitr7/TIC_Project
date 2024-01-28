@@ -32,13 +32,13 @@
     </v-btn>
   </div>
   <div id="carsContainerHome">
-    <v-card v-for="car in filterCars" :key="car.VIN" max-width="344" class="carCard">
+    <v-card   v-for="car in filterCars" :key="car.VIN" width="270" class="carCard">
       <v-img
         :src="car.image"
         height="200px"
         cover
       ></v-img>
-      <v-card-title>Manufacturer: {{ car.manufacturer }}</v-card-title>
+      <v-card-title class="scroll-title">Manufacturer: {{ car.manufacturer }}</v-card-title>
       <v-card-subtitle>Model: {{ car.model }}</v-card-subtitle>
       <v-card-subtitle>Price: {{ car.price }} $/day</v-card-subtitle>
       <v-card-actions>
@@ -46,7 +46,7 @@
           v-if="user.loggedIn"
           variant="text"
           @click="rentCar(car)"
-          class="activeButtonsHome"
+          class="activeButtonsHomeRent"
         >
           Rent car
         </v-btn>
@@ -66,7 +66,7 @@
         </div>
       </v-expand-transition>
     </v-card>
-    <v-spacer></v-spacer>
+    
   </div>
 </template>
 
@@ -80,6 +80,9 @@ import { getCurrentInstance } from "vue";
 import { ref } from "vue";
 
 export default {
+  mounted() {
+    localStorage.clear();
+  },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -97,17 +100,6 @@ export default {
       await store.dispatch("logOut");
       router.push("/");
     };
-
-    // const methodThatForcesUpdate = () => {
-    //   const instance = getCurrentInstance();
-    //   instance.proxy.forceUpdate();
-    // };
-
-/*
-    setTimeout(function () {
-      location.reload(true);
-    }, 1500); // Reloads the current page
-*/
     return { user, signOut };
   },
 
@@ -229,9 +221,14 @@ export default {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  margin: 5px;
-  margin-top: 20px;
+  margin: 20px;
+  justify-content: center;
 }
+
+.scroll-title {
+    white-space: nowrap;
+    overflow-x: auto;
+  }
 
 .carCard {
   align-items: center;
@@ -261,13 +258,25 @@ export default {
 
 .activeButtonsHome {
   background-color: #a0085f;
-  color: whitesmoke;
+  color: white;
+  border-radius: 5px;
+  border: 3px solid;
+  border-color: #862e42;
+  height: 30px;
+  margin: 10px;
+  width: 300px;
+  display: inline;
+}
+
+.activeButtonsHomeRent{
+  background-color: #a0085f;
+  color: white;
   border-radius: 5px;
   border: 3px solid;
   border-color: #862e42;
   height: 30px;
   margin: 20px;
-  width: 30%;
+  width: 100px;
   display: inline;
 }
 body {
@@ -281,4 +290,5 @@ body {
 #logOutHome{
   width: 20%;
 }
+
 </style>

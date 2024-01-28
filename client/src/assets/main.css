@@ -94,16 +94,24 @@
     color: #fff;
     background-color: #a0085f;
     width: 40%;
-    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
   }
   
   .rentalCard {
-    width: 500px;
+    width: 450px;
     display: block;
     flex-direction: row;
     justify-content: center;
     margin: 10px;
     padding: 10px;
+  }
+
+  .card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 800px;
   }
 
   #titleHome {
@@ -117,8 +125,8 @@
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    margin: 5px;
-    margin-top: 20px;
+    margin: 20px;
+    justify-content: center;
   }
   
   .carCard {
@@ -133,13 +141,13 @@
   
 .activeButtonsHome {
   background-color: #a0085f;
-  color: whitesmoke;
+  color: black;
   border-radius: 5px;
   border: 3px solid;
   border-color: #862e42;
   height: 30px;
-  margin: 20px;
-  width: 30%;
+  margin: 10px;
+  width: 25%;
   display: inline;
 }
 #centerHome{
@@ -186,7 +194,6 @@ nav {
 }
 
 
-
   @media only screen and (max-width: 1080px) {
     #loginForm, #registerForm{
         width: 100%;
@@ -199,8 +206,42 @@ nav {
         flex-direction: column;
     flex-wrap: wrap;
       }
+
+      #centerHome{
+        flex-direction: column;
+
+      }
+      #activeButtonsHome{
+        padding: 10px;
+        width: 30%;
+        flex-wrap: nowrap;
+        display: block;
+        margin: 0 auto;
+      }
+      .rentalCard{
+       max-width: 100%;
+       flex-wrap: wrap;
+       flex-direction: column;
+       margin: 10px;
+       padding: 10px;
+      
+      }
+      .card{
+        width: 100%;
+        flex-direction: column;
+       
+      } 
+
+
   }
   
-  
+  /* .rentalCard{
+    width: 80%;
+    flex-wrap: nowrap;
+  }
+  .card{
+    width: 70%;
+    flex-wrap: nowrap;
+  } */
   
   

@@ -38,9 +38,12 @@
         height="200px"
         cover
       ></v-img>
+
       <v-card-title class="scroll-title">Manufacturer: {{ car.manufacturer }}</v-card-title>
       <v-card-subtitle>Model: {{ car.model }}</v-card-subtitle>
-      <v-card-subtitle>Price: {{ car.price }} $/day</v-card-subtitle>
+      <v-card-subtitle>Price: {{ car.price }} &euro;/day</v-card-subtitle>
+      <v-card-subtitle><img :src="getSeatsIcon()" alt="Seats icon" style="width: 16px; height: 16px;" />: {{ car.seats }} </v-card-subtitle>
+      <v-card-subtitle><img :src="getFuelIcon()" alt="Fuel icon" style="width: 16px; height: 16px;" />: {{ car.fuel }} </v-card-subtitle>
       <v-card-actions>
         <v-btn
           v-if="user.loggedIn"
@@ -63,10 +66,11 @@
           <v-divider></v-divider>
 
           <v-card-text> VIN: {{ car.vin }} </v-card-text>
+
         </div>
       </v-expand-transition>
     </v-card>
-    
+
   </div>
 </template>
 
@@ -80,9 +84,12 @@ import { getCurrentInstance } from "vue";
 import { ref } from "vue";
 
 export default {
-  mounted() {
-    localStorage.clear();
-  },
+  // beforeUnmount() {
+  //   console.log('se apeleaza bfUnm Home')
+  //   const store = useStore();
+  //   localStorage.clear();
+  //   store.dispatch("logOut");
+  // },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -184,10 +191,7 @@ export default {
     },
   },
   methods: {
-    refreshPage() {
-      location.reload(true);
-    },
-    rentCar(car) {
+   rentCar(car) {
       let info = {};
       info.vin = car.vin;
       info.user = this.user.data.email;
@@ -207,7 +211,14 @@ export default {
     toggleOrder() {
       this.order = !this.order;
     },
+    getFuelIcon() {
+      return 'https://cdn-icons-png.flaticon.com/128/115/115101.png';  // Example icon link for Gasoline
+    },
+    getSeatsIcon(){
+      return 'https://cdn-icons-png.flaticon.com/128/1023/1023409.png'
+    }
   },
+
 };
 </script>
 
@@ -239,22 +250,6 @@ export default {
   margin: 5px;
   width: max-content;
 }
-/*.v-card {
-  align-items: center;
-  border: 2px solid;
-  border-color: #a0085f;
-  border-radius: 5px;
-  box-shadow: 0px 5px 20px rgba(34, 35, 58, 0.2);
-  margin: 5px;
-  width: max-content;
-
-  width: 500px;
-  display: block;
-  flex-direction: row;
-  justify-content: center;
-  margin: 10px;
-  padding: 10px;
-} */
 
 .activeButtonsHome {
   background-color: #a0085f;

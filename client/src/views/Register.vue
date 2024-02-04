@@ -88,7 +88,7 @@ export default {
         router.push('/')
       }
       catch (err) {
-        error.value = err.message
+        error.value = "Can't create account. Please check email and password"
             }
     }
 

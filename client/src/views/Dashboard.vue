@@ -27,7 +27,7 @@
                   v-if="rental.user == user.data.email"
                   class="rentalCard"
                 >
-                  <v-card-title
+                  <v-card-title class="scroll-title"
                     >Your rentals are: {{ rental.vin }}</v-card-title
                   >
                   <v-card-subtitle>For: {{ rental.days }} days</v-card-subtitle>
@@ -35,7 +35,7 @@
                     >From: {{ rental.dateStart }}
                   </v-card-subtitle>
                   <v-card-subtitle>To: {{ rental.dateEnd }} </v-card-subtitle>
-                  <v-card-subtitle>Price: {{ rental.price }} </v-card-subtitle>
+                  <v-card-subtitle>Price: {{ rental.price }} &euro; </v-card-subtitle>
                   <div class="col-md-8 offset-md-5">
                     <button
                       id="editRental"
@@ -53,16 +53,25 @@
                       class="activeButtonsEdit"
                       @click="deleteRental(rental)"
                     >
-                      Delete
+                      Cancel rental
                     </button>
                   </div>
                 </v-card>
               </template>
             </div>
           </div>
-          <div v-else class="alert alert-danger" role="alert">
-            You are not logged in!
+          <div v-else>
+            <div id="centerLogIn">
+            <div class="alert alert-danger" role="alert">
+            <div class="form-group" id="centerLogIn">
+              You are not logged in!
+                <div class="col-md-8 offset-md-5">
+                  <button type="submit" @click="getLogin()" class="activeButtons">Login</button>
+              </div>
+              </div>
           </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -78,9 +87,6 @@ import { requestOptions, base_url } from "@/requestOptions";
 
 export default {
   name: "DashboardComponent",
-  mounted() {
-    localStorage.clear();
-  },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -111,14 +117,41 @@ export default {
         requestOptions
       ).then((res) =>
         res.json().then((res) => {
+          if(res === "Rentals not found"){
+            this.$notify({ type: "warn", text: "At the moment you don't have any rentals!" });
+
+          }
+          else{
           this.rentals = [...res];
+          }
         })
       );
     }
   },
   methods: {
+    checkEditDate(start){
+      let day1, month1, year1;
+      if(start.includes("/"))
+      [day1, month1, year1] = start.split('/');
+    else{
+      [year1, month1, day1] = doc.data().dateStart.split("-");
+    }
+  const current=new Date();
+  const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
+  console.log("data pt edit check")
+  console.log(current)
+  console.log(dateObj1)
+  if(current>dateObj1)
+  return false;
+return true;
+    },
     editRental(rental) {
+      let check=this.checkEditDate(rental.dateStart)
+      if(check)
       this.$router.push({ path: "/editRental", query: rental });
+    else{
+      this.$notify({ type: "error", text: "Can't edit a date from the past!" });
+    }
     },
     deleteRental(rental) {
       let requestParams = { ...requestOptions };
@@ -127,10 +160,25 @@ export default {
         window.localStorage.getItem("JWTtk");
       requestParams.headers.email = this.$route.query.email;
       requestParams.headers.vin = rental.vin;
-      fetch(base_url + "rentals/" + rental.id, requestParams);
-      this.rentals.splice(this.rentals.indexOf(rental), 1);
+      requestParams.headers.start = rental.dateStart;
+      console.log("date start to delete:")
+      console.log(requestParams.headers.start)
+      fetch(base_url + "rentals/" + rental.id, requestParams)
+      .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+          if (res === "User is not auth" || res === "Cannot cancel date") {
+            console.log("Error");
+            this.$notify({ type: "error", text: "Cannot cancel date! Time period already passed!" });
+          } else {
+      this.rentals.splice(this.rentals.indexOf(rental), 1);}
+          })
+    },
+    getLogin(){
+      this.$router.push("/login")
     },
   },
+
 };
 </script>
 
@@ -147,6 +195,16 @@ export default {
   align-items: center;
   height: fit-content;
 }
+
+#centerLogIn{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-direction: columns;
+}
+
+
 #logOutEdit {
   width: 80%;
 }
@@ -157,19 +215,24 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #fff;
   background-color: #a0085f;
-  width: 40%;
+  width: 45%;
   margin-bottom: 10px;
   margin-left: 10px;
 }
 
 .rentalCard {
-  display: block;
-  flex-direction: row;
-  justify-content: center;
-  /* margin: 10px;
-  padding: 10px; */
-  width: max-content;
+  width: 430px;
+    display: block;
+    flex-direction: row;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px;
 }
+
+.scroll-title {
+    white-space: nowrap;
+    overflow-x: auto;
+  }
 
 .card {
   display: flex;

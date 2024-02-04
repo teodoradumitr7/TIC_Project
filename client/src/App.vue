@@ -75,7 +75,7 @@ export default {
     methods:{
       returnEmail(){
       if(this.$store.state.isAuthenticated){
-        console.log(this.$store.state.user.data.email)
+        //console.log(this.$store.state.user.data.email)
       return this.$store.state.user.data.email;
     }
     }

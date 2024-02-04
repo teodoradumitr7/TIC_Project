@@ -9,6 +9,7 @@ let imageList=["https://img.freepik.com/premium-vector/sketch-hand-drawn-single-
 "https://img.freepik.com/premium-vector/black-white-car-vector-illustration-conceptual-design_543548-82.jpg",
 "https://img.freepik.com/premium-vector/black-white-car-vector-illustration-conceptual-design_543548-17.jpg"
 ]
+let seatList=[2,4,5]
 const generateCars = () => {
   let carList = [];
   for (let i = 0; i < 10; i++) {
@@ -16,14 +17,17 @@ const generateCars = () => {
     let modelF = faker.vehicle.model();
     let vinF = faker.vehicle.vin();
     let priceF=Math.floor(Math.random() * (300-100) + 100);
-    
+    let randomSeat=Math.random()*seatList.length;
     let random=Math.random() * imageList.length;
+    let fuelF=faker.vehicle.fuel();
     let car = {
       manufacturer: manufacturerF,
       model: modelF,
       vin: vinF,
       price: priceF,
-      image:imageList[Math.floor(random)]
+      image:imageList[Math.floor(random)],
+      seats:seatList[Math.floor(randomSeat)],
+      fuel:fuelF
     };
     vinList.push(vinF);
     priceList.push(priceF)

@@ -6,8 +6,6 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 let jwt = require("jsonwebtoken");
-const privateKey = fs.readFileSync("private.key");
-const publicKey = fs.readFileSync("public.key");
 const logger = require("morgan");
 const db = require("./db");
 const secret = "carRental";
@@ -15,7 +13,6 @@ const { generateCars, generateRentals } = require("../api/utils");
 const carRouter = require("../api/routes/car");
 const rentalRouter = require("../api/routes/rent");
 const { uuid } = require('uuidv4');
-
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -140,26 +137,4 @@ app.listen(port, () => {
   console.log(`Backend listening on port ${port}!`);
 });
 
-//TODO sa nu isi mai dea refresh si sa scoata din localstorage
-/*
-import { onBeforeUnmount, onMounted } from 'vue';
 
-export default {
-  name: 'MyComponent',
-  mounted() {
-    onMounted(() => {
-      window.addEventListener('beforeunload', this.clearLocalStorage);
-    });
-  },
-  beforeUnmount() {
-    onBeforeUnmount(() => {
-      window.removeEventListener('beforeunload', this.clearLocalStorage);
-    });
-  },
-  methods: {
-    clearLocalStorage() {
-      localStorage.clear();
-    }
-  }
-}
-*/

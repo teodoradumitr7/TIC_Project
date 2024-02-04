@@ -19,6 +19,7 @@
           <button class="button is-primary is-fullwidth" type="submit">
             Add rental request
           </button>
+
         </div>
       </form>
     </div>
@@ -71,7 +72,7 @@ export default {
   if(current>dateObj1 || current>dateObj2){
     return false;
   }
-  else if(diffInMs<0){
+  else if(diffInMs<=0){
     return false;
   }
  return true;
@@ -93,8 +94,8 @@ export default {
       fetch(base_url + "rentals/"+this.$route.query.id, requestParams)
         .then((res) => res.json())
         .then((res) => {
-          if (res === "User is not auth" || res==="Data nu este buna") {
-            console.log("Error");
+          if (res === "User is not auth" || res==="Date not good") {
+            if(res === "User is not auth" )console.log("Error from auth");
             this.$notify({ type: "error", text: "Car is already booked. Change date!" });
           } else {
             rental.id = res.id;

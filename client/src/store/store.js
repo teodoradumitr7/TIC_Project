@@ -26,7 +26,7 @@ const store= createStore({
       loggedIn: false,
       data: null
     },
-    isAuthenticated: localStorage.getItem("JWTtoken"),
+    isAuthenticated:false,
   },
   getters: {
     user(state){
@@ -34,6 +34,7 @@ const store= createStore({
     }
   },
   mutations: {
+
     SET_LOGGED_IN(state, value) {
       state.user.loggedIn = value;
       state.isAuthenticated = value;
@@ -60,7 +61,7 @@ const store= createStore({
               },
               redirect: 'follow',
               referrerPolicy: 'no-referrer',
-              body: JSON.stringify(response.user) //data format must be the same as in header
+              body: JSON.stringify(response.user) 
               })
               .then(res => res.text()
               .then(res => console.log(res))
@@ -99,8 +100,9 @@ const store= createStore({
   async logOut(context){
       await signOut(auth)
       context.commit('SET_USER', null)
-      localStorage.removeItem("JWTtoken", false);
+      localStorage.removeItem("JWTtoken");
       localStorage.removeItem("JWTtk");
+      localStorage.clear();
   },
 
   async fetchUser(context ,user) {

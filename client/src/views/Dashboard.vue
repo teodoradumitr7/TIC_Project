@@ -35,7 +35,9 @@
                     >From: {{ rental.dateStart }}
                   </v-card-subtitle>
                   <v-card-subtitle>To: {{ rental.dateEnd }} </v-card-subtitle>
-                  <v-card-subtitle>Price: {{ rental.price }} &euro; </v-card-subtitle>
+                  <v-card-subtitle
+                    >Price: {{ rental.price }} &euro;
+                  </v-card-subtitle>
                   <div class="col-md-8 offset-md-5">
                     <button
                       id="editRental"
@@ -62,16 +64,22 @@
           </div>
           <div v-else>
             <div id="centerLogIn">
-            <div class="alert alert-danger" role="alert">
-            <div class="form-group" id="centerLogIn">
-              You are not logged in!
-                <div class="col-md-8 offset-md-5">
-                  <button type="submit" @click="getLogin()" class="activeButtons">Login</button>
+              <div class="alert alert-danger" role="alert">
+                <div class="form-group" id="centerLogIn">
+                  You are not logged in!
+                  <div class="col-md-8 offset-md-5">
+                    <button
+                      type="submit"
+                      @click="getLogin()"
+                      class="activeButtons"
+                    >
+                      Login
+                    </button>
+                  </div>
+                </div>
               </div>
-              </div>
+            </div>
           </div>
-          </div>
-        </div>
         </div>
       </div>
     </div>
@@ -110,6 +118,8 @@ export default {
   data() {
     return { email: this.$route.query.email, rentals: [] };
   },
+  //ia din bd inchirierile
+  //daca nu are primeste notificare
   created() {
     if (!this.rentals.length) {
       fetch(
@@ -117,68 +127,78 @@ export default {
         requestOptions
       ).then((res) =>
         res.json().then((res) => {
-          if(res === "Rentals not found"){
-            this.$notify({ type: "warn", text: "At the moment you don't have any rentals!" });
-
-          }
-          else{
-          this.rentals = [...res];
+          if (res === "Rentals not found") {
+            this.$notify({
+              type: "warn",
+              text: "At the moment you don't have any rentals!",
+            });
+          } else {
+            this.rentals = [...res];
           }
         })
       );
     }
   },
   methods: {
-    checkEditDate(start){
+    //verifica ca nu cumva data deja sa fi trecut si asa nu avem voie sa modificam
+    checkEditDate(start) {
       let day1, month1, year1;
-      if(start.includes("/"))
-      [day1, month1, year1] = start.split('/');
-    else{
-      [year1, month1, day1] = doc.data().dateStart.split("-");
-    }
-  const current=new Date();
-  const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
-  console.log("data pt edit check")
-  console.log(current)
-  console.log(dateObj1)
-  if(current>dateObj1)
-  return false;
-return true;
+      if (start.includes("/")) [day1, month1, year1] = start.split("/");
+      else {
+        [year1, month1, day1] = doc.data().dateStart.split("-");
+      }
+      const current = new Date();
+      const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
+      console.log("data pt edit check");
+      console.log(current);
+      console.log(dateObj1);
+      if (current > dateObj1) return false;
+      return true;
     },
+    //verifica data si daca e ok trimite obj ca sa il editam
     editRental(rental) {
-      let check=this.checkEditDate(rental.dateStart)
-      if(check)
-      this.$router.push({ path: "/editRental", query: rental });
-    else{
-      this.$notify({ type: "error", text: "Can't edit a date from the past!" });
-    }
+      let check = this.checkEditDate(rental.dateStart);
+      if (check) this.$router.push({ path: "/editRental", query: rental });
+      else {
+        this.$notify({
+          type: "error",
+          text: "Can't edit a date from the past!",
+        });
+      }
     },
+    //trimite catre stergere unde se va verifica in back daca a trecut perioada si se poate sau nu anula
+    //face check auth in backend asa ca trimit jwt tokenul
+    //daca perioada nu e bn si primim 400 arata notificare
+    //daca e bn atunci sterge si face refresh la ele
     deleteRental(rental) {
       let requestParams = { ...requestOptions };
       requestParams.method = "DELETE";
       requestParams.headers.authorization =
-        window.localStorage.getItem("JWTtk");
+      window.localStorage.getItem("JWTtk");
       requestParams.headers.email = this.$route.query.email;
       requestParams.headers.vin = rental.vin;
       requestParams.headers.start = rental.dateStart;
-      console.log("date start to delete:")
-      console.log(requestParams.headers.start)
+      console.log("date start to delete:");
+      console.log(requestParams.headers.start);
       fetch(base_url + "rentals/" + rental.id, requestParams)
-      .then((res) => res.json())
+        .then((res) => res.json())
         .then((res) => {
           console.log(res);
           if (res === "User is not auth" || res === "Cannot cancel date") {
             console.log("Error");
-            this.$notify({ type: "error", text: "Cannot cancel date! Time period already passed!" });
+            this.$notify({
+              type: "error",
+              text: "Cannot cancel date! Time period already passed!",
+            });
           } else {
-      this.rentals.splice(this.rentals.indexOf(rental), 1);}
-          })
+            this.rentals.splice(this.rentals.indexOf(rental), 1);
+          }
+        });
     },
-    getLogin(){
-      this.$router.push("/login")
+    getLogin() {
+      this.$router.push("/login");
     },
   },
-
 };
 </script>
 
@@ -196,14 +216,13 @@ return true;
   height: fit-content;
 }
 
-#centerLogIn{
+#centerLogIn {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   flex-direction: columns;
 }
-
 
 #logOutEdit {
   width: 80%;
@@ -222,17 +241,19 @@ return true;
 
 .rentalCard {
   width: 430px;
-    display: block;
-    flex-direction: row;
-    justify-content: center;
-    margin: 10px;
-    padding: 10px;
+  display: block;
+  flex-direction: row;
+  justify-content: center;
+  margin: 10px;
+  padding: 10px;
 }
 
+/* nu trece pe linia urm deci nowrap
+scrollbar cand face overflow pe x deci orizontal */
 .scroll-title {
-    white-space: nowrap;
-    overflow-x: auto;
-  }
+  white-space: nowrap;
+  overflow-x: auto;
+}
 
 .card {
   display: flex;

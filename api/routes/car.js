@@ -1,9 +1,8 @@
 const router = require("express").Router();
-const { Router } = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const db = require("../db");
-
+//ruta preluare masini din bd
+//daca nu e niciuna returneaza 404 not found
+//altfel le preia si trimite la front o lista de obj de tip masina
 router.get("/cars", async (req, res) => {
   try {
     let cars = [];

@@ -84,12 +84,6 @@ import { getCurrentInstance } from "vue";
 import { ref } from "vue";
 
 export default {
-  // beforeUnmount() {
-  //   console.log('se apeleaza bfUnm Home')
-  //   const store = useStore();
-  //   localStorage.clear();
-  //   store.dispatch("logOut");
-  // },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -191,6 +185,7 @@ export default {
     },
   },
   methods: {
+    //creeaza obj nou si il trimite query ca sa il inchiriez in fct de pret si user email, dupa se adauga data si zilele
    rentCar(car) {
       let info = {};
       info.vin = car.vin;
@@ -199,6 +194,7 @@ export default {
       console.log("info ", info);
       this.$router.push({ path: "/rentCar", query: info });
     },
+    //tipul de sortare daca pe pret sau pe manufacturer
     setSorted(type) {
       console.log(this.sorted);
       if (type === "price") {
@@ -208,11 +204,13 @@ export default {
       }
       this.toggleOrder();
     },
+    //schimba ordinea daca asc sau desc
     toggleOrder() {
       this.order = !this.order;
     },
+    //poze
     getFuelIcon() {
-      return 'https://cdn-icons-png.flaticon.com/128/115/115101.png';  // Example icon link for Gasoline
+      return 'https://cdn-icons-png.flaticon.com/128/115/115101.png';
     },
     getSeatsIcon(){
       return 'https://cdn-icons-png.flaticon.com/128/1023/1023409.png'

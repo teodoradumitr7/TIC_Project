@@ -1,44 +1,47 @@
 const express = require("express");
+//framework care are feature uri pt creare aplic web/mobile, layer creat peste node
 const app = express();
 const port = process.env.PORT || 3000;
+//Cross-Origin Resource Sharing-clientul front end face requesturi pe resurse
+//permite accesul la resursele serverului Express.js de pe o altă origine, de ex un server cu un domeniu dif
 const cors = require("cors");
-const fs = require("fs");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
-let jwt = require("jsonwebtoken");
+//logging tool->middleware, folos in implementarea http servers cu node si express
 const logger = require("morgan");
 const db = require("./db");
-const secret = "carRental";
 const { generateCars, generateRentals } = require("../api/utils");
 const carRouter = require("../api/routes/car");
 const rentalRouter = require("../api/routes/rent");
+//unique id folosit pt crearea doc din bd
 const { uuid } = require('uuidv4');
 
+//folosit pt a parsa request urile din body
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
+//configureaza morgan sa arate log uri pe developement mode
 app.use(logger("dev"));
 
 app.use("/", carRouter);
 app.use("/", rentalRouter);
 
+//err handling middleware funct pe express
+//in express o fct middleware are acces la req,res si next
 app.use((error, request, response, next) => {
   console.error(`[ERROR]: ${error}`);
   response.status(500).json(error);
 });
 
-//register user
-//login user
-//get cars
+//ruta de mocking pt masini
 app.get("/populateCars", async (req, res) => {
   let carMock = generateCars();
   carMock.forEach(async (car) => {
     await db.collection("cars").add(car);
   });
-  //let cars=await db.collection("cars").get();
   res.send("PopulateCars");
 });
 
+//ruta mocking pt inchirieri
+//adauga si in useri rented pt fiecare
 app.get("/populateRentals", async (req, res) => {
   let rentalMock = generateRentals();
   rentalMock.forEach(async (rent) => {
@@ -84,15 +87,12 @@ app.get("/populateRentals", async (req, res) => {
       days:rental.days
     };
     let addToUserResponse = await addToUserRef.set(addToUserDocData);
-  }
-
-
- 
+  } 
   });
-  //let cars=await db.collection("cars").get();
   res.send("PopulateRental");
 });
 
+//diferenta in zile intre 2 date
 function daysBetweenDates(date1, date2) {
   const [day1, month1, year1] = date1.split('/');
   const [day2, month2, year2] = date2.split('/');
@@ -103,6 +103,8 @@ function daysBetweenDates(date1, date2) {
   return diffInDays;
 }
 
+//register ca sa salveze si in firebase userul si id ul unic
+//folosit la checkAutorization
 app.post("/register", async (req, res) => {
   let user = req.body;
   console.log("trying to post the following data: ", user);
@@ -122,6 +124,7 @@ app.post("/register", async (req, res) => {
 
 });
 
+//login user
 app.post("/login", async (req, res) => {
   let user = req.body;
    
@@ -132,7 +135,8 @@ app.post("/login", async (req, res) => {
       
 });
 
-
+//start server
+//face bind cu portul pe care l am pus eu
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}!`);
 });

@@ -1,12 +1,10 @@
 const router = require("express").Router();
-const { Router } = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const db = require("../db");
 const { uuid } = require("uuidv4");
 
 async function checkAuthorization(req, res, next) {
   //mai degraba daca auth e acelasi cu local storage
+  //deci vad daca tokenul din local storage e acelasi cu id ul userului primit doar prin email
   let token = req.headers.authorization;
   const filteredUsers = db.collection("users");
   const snapshot = await filteredUsers.where("id", "==", token).get();
@@ -16,14 +14,17 @@ async function checkAuthorization(req, res, next) {
     return;
   } else {
     req.email = snapshot;
-    //we have access to the identification data used to generate the token
-    //this way we can write a logic to access only the resources for which
-    //a request is authorized
+    //acum am acces si st autorizat
     next();
   }
 }
 
 //post rental req
+//verifica daca perioada este libera pt masina aleasa
+//daca da, ok=1 si se face inchirierea
+//altfel ok=0 si status 400 ca sa se schimbe data
+//de asemenea sa nu fie data curenta> data de preluare
+//si data returnare<data preluare
 router.post("/rentals/:id", checkAuthorization, async (req, res) => {
   try {
     let rental = {
@@ -35,7 +36,7 @@ router.post("/rentals/:id", checkAuthorization, async (req, res) => {
       price:
         req.body.price * daysBetweenDates(req.body.dateEnd, req.body.dateStart),
     };
-
+//cum firebase pune data invers, trb verificat daca vine separata data cu - sau /, asa ca o putem modifica si sa avem ulterior mereu /
     let dayD, monthD, yearD;
     let dayR, monthR, yearR;
     let rentalId = uuid();
@@ -140,7 +141,8 @@ router.post("/rentals/:id", checkAuthorization, async (req, res) => {
 });
 
 //put rental req
-//first checks if exists, then excludes the actual date of the request so only checks between the rest of them
+//mai intai verific daca exista inainte
+//apoi excluda rental req curent si verifica daca este posibila inchirierea noua
 router.put("/rentals/:id", checkAuthorization, async (req, res) => {
   try {
     let rental = {
@@ -150,10 +152,7 @@ router.put("/rentals/:id", checkAuthorization, async (req, res) => {
       price:
         daysBetweenDates(req.body.dateEnd, req.body.dateStart) * req.headers.price,
     };
-console.log("pretul")
-    console.log(rental.days)
-    console.log(rental.price)
-
+//primeste pretul de inchiriere al unei masini deoarece din front am trimis pret/days,deci cat costa efectiv masina pe zi
     let dayD, monthD, yearD;
     let dayR, monthR, yearR;
     let rentalId = uuid();
@@ -204,7 +203,7 @@ console.log("pretul")
       }
     });
     if (ok == 1) {
-      //pria data sterg inchirierea veche, dupa adaug pe aia noua, nu modific pe ac
+      //pria data sterg inchirierea veche, dupa adaug pe aia noua, nu modific pe ac pt ca trebuie sa schimb si id ul asa
       let del1 = await db
         .collection("users")
         .doc(req.headers.email)
@@ -272,7 +271,7 @@ console.log("pretul")
 });
 
 //delete rental req
-//only if time period has not already passed
+//doar daca n a trecut perioada pot sa anulez cererea de inchiriere
 router.delete("/rentals/:id", checkAuthorization, async (req, res) => {
   try {
     let dayD, monthD, yearD;
@@ -309,6 +308,8 @@ router.delete("/rentals/:id", checkAuthorization, async (req, res) => {
   }
 });
 
+
+//nr zile intre 2 date
 function daysBetweenDates(dateEnd, dateStart) {
   let day1, month1, year1;
   let day2, month2, year2;
@@ -326,6 +327,7 @@ function daysBetweenDates(dateEnd, dateStart) {
   return diffInDays;
 }
 
+//inchirierile unui user
 router.get("/rentals/:email", async (req, res) => {
   try {
     let rentals = [];

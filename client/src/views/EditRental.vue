@@ -34,18 +34,19 @@
     <div v-else class="alert alert-danger" role="alert">
       You are not logged in!
       <div class="form-group">
-                <div class="col-md-8 offset-md-5">
-                  <button type="submit" @click="getLogin()" class="activeButtons">Login</button>
-              </div>
-              </div>
+        <div class="col-md-8 offset-md-5">
+          <button type="submit" @click="getLogin()" class="activeButtons">
+            Login
+          </button>
+        </div>
+      </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import { requestOptions, base_url } from "@/requestOptions";
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 export default {
   computed: {
     isAuthenticated() {
@@ -54,93 +55,104 @@ export default {
     },
   },
   data() {
+    //formateaza data si o arata userului ca sa vada pe aia veche cu ce schimba
     const formatDate = (date) => {
-      const [day, month, year] = date.split('/');
+      const [day, month, year] = date.split("/");
       return `${year}-${month}-${day}`;
     };
 
     return {
-      dateStart: this.$route.query.dateStart ? formatDate(this.$route.query.dateStart) : null,
-      dateEnd: this.$route.query.dateEnd ? formatDate(this.$route.query.dateEnd) : null
+      dateStart: this.$route.query.dateStart
+        ? formatDate(this.$route.query.dateStart)
+        : null,
+      dateEnd: this.$route.query.dateEnd
+        ? formatDate(this.$route.query.dateEnd)
+        : null,
     };
   },
-watch: {
+  //watcher ca sa vad ca se schimba
+  watch: {
     dateStart(newVal, oldVal) {
-      console.log('Old start date:', oldVal);
-      console.log('New start date:', newVal);
+      console.log("Old start date:", oldVal);
+      console.log("New start date:", newVal);
     },
     dateEnd(newVal, oldVal) {
-      console.log('Old end date:', oldVal);
-      console.log('New end date:', newVal);
+      console.log("Old end date:", oldVal);
+      console.log("New end date:", newVal);
     },
   },
   methods: {
-    checkDate(start,end){
-      const [day1, month1, year1] = start.split('/');
-  const [day2, month2, year2] = end.split('/');
-  const current=new Date();
-  const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
-  const dateObj2 = new Date(`${year2}-${month2}-${day2}`);
-  let diffInMs = dateObj2 - dateObj1;
-  console.log("data din front")
-  console.log(start)
-  console.log(end)
+    //verifica data sa fie dupa cea curenta
+    //si data de returnare sa fie mai mare decat cea de inchiriere
+    checkDate(start, end) {
+      const [day1, month1, year1] = start.split("/");
+      const [day2, month2, year2] = end.split("/");
+      const current = new Date();
+      const dateObj1 = new Date(`${year1}-${month1}-${day1}`);
+      const dateObj2 = new Date(`${year2}-${month2}-${day2}`);
+      let diffInMs = dateObj2 - dateObj1;
+      console.log("data din front");
+      console.log(start);
+      console.log(end);
 
-
-  if(current>dateObj1 || current>dateObj2){
-    return false;
-  }
-  else if(diffInMs<=0){
-    return false;
-  }
- return true;
+      if (current > dateObj1 || current > dateObj2) {
+        return false;
+      } else if (diffInMs <= 0) {
+        return false;
+      }
+      return true;
     },
+    //pt editare se trimite la back doar daca e data buna
+    //daca nu se arata notificare
     editRental() {
       let requestParams = { ...requestOptions };
       requestParams.method = "PUT";
       let rental = {
         dateStart: this.dateStart,
         dateEnd: this.dateEnd,
-        user:this.$route.query.user,
-        vin:this.$route.query.vin,
-        price:this.$route.query.price,
-        rentalId:this.$route.query.id,
-        days:this.$route.query.days
+        user: this.$route.query.user,
+        vin: this.$route.query.vin,
+        price: this.$route.query.price,
+        rentalId: this.$route.query.id,
+        days: this.$route.query.days,
       };
-      let bool=this.checkDate(rental.dateStart,rental.dateEnd)
-      //bool=this.checkEditDate(rental.dateStart)
-      if(bool)
-      {
-      requestParams.body = JSON.stringify(rental);
-      requestParams.headers.authorization=window.localStorage.getItem("JWTtk");
-      requestParams.headers.email=rental.user
-      requestParams.headers.vin=rental.vin
-      let priceNew=rental.price/rental.days
-      console.log(priceNew)
-      requestParams.headers.price=priceNew
-      console.log(rental.rentalId)
-      fetch(base_url + "rentals/" + this.$route.query.id, requestParams)
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res);
-          if (res === "User is not auth" || res === "Date not good") {
-            console.log("Error");
-            this.$notify({ type: "error", text: "Car is already booked. Change date!" });
-         } else {
-            let rentals = fetch(base_url + "rentals", requestOptions);
-            let emailVal={}
-            emailVal.email=rental.user
-            console.log(emailVal)
-            this.$router.push({path:"/dashboard",query:emailVal});
-          }
-        })}
-        else{ console.log("NU e buna data")
+      let bool = this.checkDate(rental.dateStart, rental.dateEnd);
+      if (bool) {
+        requestParams.body = JSON.stringify(rental);
+        requestParams.headers.authorization =
+          window.localStorage.getItem("JWTtk");
+        requestParams.headers.email = rental.user;
+        requestParams.headers.vin = rental.vin;
+        let priceNew = rental.price / rental.days;
+        console.log(priceNew);
+        requestParams.headers.price = priceNew;
+        console.log(rental.rentalId);
+        fetch(base_url + "rentals/" + this.$route.query.id, requestParams)
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            if (res === "User is not auth" || res === "Date not good") {
+              console.log("Error");
+              this.$notify({
+                type: "error",
+                text: "Car is already booked. Change date!",
+              });
+            } else {
+              let rentals = fetch(base_url + "rentals", requestOptions);
+              let emailVal = {};
+              emailVal.email = rental.user;
+              console.log(emailVal);
+              this.$router.push({ path: "/dashboard", query: emailVal });
+            }
+          });
+      } else {
+        console.log("NU e buna data");
         this.$notify({ type: "error", text: "Date is not properly inserted" });
-        }
+      }
     },
-    getLogin(){
-      this.$router.push("/login")
-    }
+    getLogin() {
+      this.$router.push("/login");
+    },
   },
 };
 </script>
@@ -153,7 +165,7 @@ watch: {
   padding: 20px;
 }
 
-.containerEditRent{
+.containerEditRent {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -203,5 +215,4 @@ watch: {
   margin: 3px;
   margin-top: 10px;
 }
-
 </style>

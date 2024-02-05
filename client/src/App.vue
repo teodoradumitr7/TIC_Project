@@ -25,43 +25,6 @@ import { RouterLink, RouterView } from "vue-router";
 </div>
   <RouterView />
 </template>
-<!-- <template>
-  <nav>
-    <div id="linkContainer">
-      <RouterLink v-if="!user" to="/login" class="link">Login</RouterLink>
-      <RouterLink v-if="!user" to="/register" class="link">Register</RouterLink>
-      <RouterLink to="/" class="link">Home</RouterLink>
-     </div>
-  </nav>
-  <RouterView />
-</template> -->
-
-<!-- <script>
-import { mapState } from "vuex";
-
-export default {
-  computed: {
-    ...mapState(["isAuthenticated"]),
-  },
-};
-</script> -->
-
-<!-- <script>
-import { useStore } from "vuex";
-import { computed } from "vue";
-
-export default {
-  setup() {
-    const store = useStore();
-
-    const user = computed(() => {
-      return store.state.user.loggedIn;
-    });
-
-    return { user };
-  },
-};
-</script> -->
 
 <script>
 

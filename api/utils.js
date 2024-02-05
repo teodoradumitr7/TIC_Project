@@ -10,6 +10,10 @@ let imageList=["https://img.freepik.com/premium-vector/sketch-hand-drawn-single-
 "https://img.freepik.com/premium-vector/black-white-car-vector-illustration-conceptual-design_543548-17.jpg"
 ]
 let seatList=[2,4,5]
+
+//cu faker se creeaza masinile
+//pt imagine, si nr locuri se alege random dintr o lista statica
+//pretul este random generated intre 100 si 300
 const generateCars = () => {
   let carList = [];
   for (let i = 0; i < 10; i++) {
@@ -37,6 +41,8 @@ const generateCars = () => {
   return carList;
 };
 
+//se vor popula doar pt 2 useri creati anterior
+//data este convertita
 const generateRentals = () => {
   let date=new Date().toLocaleDateString('en-GB');
 

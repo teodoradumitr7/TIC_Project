@@ -43,6 +43,8 @@ const store= createStore({
       state.user.data = data;
     }
   },
+  //commit triggers mutation
+  //dispatch triggers actions
   actions: {
     async register(context, { email, password, name}){
       let url = "http://localhost:3000/"
@@ -61,7 +63,7 @@ const store= createStore({
               },
               redirect: 'follow',
               referrerPolicy: 'no-referrer',
-              body: JSON.stringify(response.user) 
+              body: JSON.stringify(response.user)
               })
               .then(res => res.text()
               .then(res => console.log(res))
